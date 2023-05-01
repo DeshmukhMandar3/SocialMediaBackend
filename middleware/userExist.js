@@ -2,7 +2,6 @@ const userModel = require("../models/user.model");
 
 const userExists = async (req, res, next) => {
   let details = req.body;
-
   try {
     const users = await userModel.find({ email: details.email });
     if (users.length == 0) {

@@ -9,21 +9,27 @@ const userRouter = express.Router();
 
 userRouter.post("/register", userExists, async (req, res, next) => {
   let details = req.body;
-
-  bcrypt.hash(details.password, 3, async function (err, hash) {
-    if (err) {
-      res.status(500).send(err);
-    } else {
-      details.password = hash;
-      try {
-        let user = new userModel(details);
-        await user.save();
-        res.status(201).send("User Registered Successfully");
-      } catch (err) {
+  if (!details.email || !details.password) {
+    return res.status(400).send({ error: "Incomplete details" });
+  }
+  try {
+    bcrypt.hash(details.password, 3, async function (err, hash) {
+      if (err) {
         res.status(500).send(err);
+      } else {
+        details.password = hash;
+        try {
+          let user = new userModel(details);
+          await user.save();
+          res.status(201).send("User Registered Successfully");
+        } catch (err) {
+          res.status(500).send(err);
+        }
       }
-    }
-  });
+    });
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
 userRouter.post("/login", async (req, res, next) => {
