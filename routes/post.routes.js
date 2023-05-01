@@ -25,10 +25,21 @@ postRouter.patch("/update/:id", authorize, async (req, res, next) => {
   }
 });
 
-postRouter.get("/", async (req, res, next) => {
+postRouter.get("/", authorize, async (req, res, next) => {
   try {
     let posts = await postModel.find().populate("likes").populate("user");
     res.status(200).send(posts);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+postRouter.get("/get/:id", authorize, async (req, res, next) => {
+  let { id } = req.params;
+
+  try {
+    let post = await postModel.findById(id).populate("user").populate("likes");
+    res.status(200).send(post);
   } catch (err) {
     res.status(500).send(err);
   }
