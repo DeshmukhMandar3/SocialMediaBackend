@@ -45,7 +45,7 @@ userRouter.post("/login", async (req, res, next) => {
       const match = await bcrypt.compare(details.password, users[0].password);
       if (match) {
         let token = jwt.sign({ id: users[0]._id }, "masai");
-        res.status(200).send({ token });
+        res.status(200).send({ token, id: users[0]._id });
       } else {
         res.status(401).send({ error: "Wrong password!" });
       }
